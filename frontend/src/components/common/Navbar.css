@@ -1,0 +1,102 @@
+/* src/components/common/Navbar.css */
+
+:root {
+  --navbar-height: 55px; /* ajústalo a la altura real de tu header */
+}
+
+/* Container for header */
+.navbar-header {
+  position: fixed;
+  height: var(--navbar-height);
+  line-height: var(--navbar-height);
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+/* Hamburger button */
+.navbar-hamburger {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+/* Overlay when menu open */
+.navbar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.4);
+  transition: opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+.navbar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Side drawer */
+.navbar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background-color: #7a75e9;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.2);
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1rem;
+}
+.navbar-drawer.open {
+  transform: translateX(0);
+}
+
+/* Nav links */
+.navbar-link {
+  padding: 0.2rem 1rem;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s;
+}
+.navbar-link:hover {
+  background-color: #521ec1;
+}
+
+/* Logout button */
+.navbar-logout {
+  margin-top: fixed;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.navbar-logout:hover {
+  background-color: #dc2626;
+}
