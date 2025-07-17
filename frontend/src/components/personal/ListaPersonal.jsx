@@ -62,7 +62,7 @@ export default function ListaPersonal() {
     } catch (err) {
       console.error('Error al cargar personal:', err);
       if (err.response?.status === 403) {
-        alert('No tienes permisos para ver la lista de personal o tu sesión ha expirado.');
+        alert('Error al cargar la lista de personal tu token ha expirado, vuelve a iniciar sesión');
       } else {
         alert('Ocurrió un error cargando la lista de personal.');
       }

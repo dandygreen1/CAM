@@ -95,7 +95,7 @@ export default function ListaGrupos() {
 
         setGrupos(enriched);
       } catch {
-        alert('Error cargando la lista de grupos');
+        alert('Error cargando la lista de grupos, por favor vuelve a iniciar sesión');
       }
     }
     fetchAndEnrich();

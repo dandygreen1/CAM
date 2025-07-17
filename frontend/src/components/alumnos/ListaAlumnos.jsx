@@ -27,32 +27,48 @@ export default function ListaAlumnos() {
   });
   const [pageSize, setPageSize] = useState(5);
 
-  // Persist expandedRow
+  // Persist expandedRow: si hay una lista abierta "ver" abierta y 
+  // recargamos la pagina, esta se queda abierta
   useEffect(() => {
     if (expandedRow === null) localStorage.removeItem('expandedAlumno');
     else localStorage.setItem('expandedAlumno', expandedRow);
   }, [expandedRow]);
 
-  // Persist page
+  // Persist page: es lo mismo que la de antes solo que esta
+  //funciona con la pagina, guarda la pagina donde estas si recargas
   useEffect(() => {
     localStorage.setItem('alumnosPage', page);
   }, [page]);
 
-  // Handle resize
+  // Handle resize este despues de cierto tamaño de la pantalla actualiza
+  // a isMobile para cambiar el navbar
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 600);
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Fetch alumnos
-  useEffect(() => {
-    API.get('/alumnos')
-      .then(({ data }) => setAlumnos(data))
-      .catch(err => console.error(err));
-  }, []);
+// Fetch alumnos: Carga automática de los datos de alumnos al entrar a la página
+useEffect(() => {
+  API.get('/alumnos')
+    .then(({ data }) => setAlumnos(data))
+    .catch(err => {
+      // Si el backend devuelve 403, suele significar que el token expiró o no es válido
+      if (err.response?.status === 403) {
+        alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+        // Opcional: redirigir al login
+        // navigate('/login');
+      } else {
+        console.error(err);
+      }
+    });
+}, []);
 
-  // Delete alumno
+
+  // Delete alumno pues esta funcion borra un alumno, primero te pide la confirmacion
+  // si no aceptas se sale y no borra nada, de lo contrario hace la peticion al 
+  // endpoint y lo borra, despues vuelve a pedir la lista de alumnos para que esta
+  // actualice 
   const handleDelete = async id => {
     if (!window.confirm('¿Estás seguro de eliminar este alumno?')) return;
     await API.delete(`/alumnos/${id}`);
@@ -60,7 +76,9 @@ export default function ListaAlumnos() {
     setAlumnos(data);
   };
 
-  // Format date
+  // Format date: esta funcion recibe una cadena en formato ISO, si no recibe
+  // nada devuelve cadena vacia, crea el objeto date de JS y transforma las fechas
+  // en formato DD/MM/YYYY para que sea lejible
   const formatDate = iso => {
     if (!iso) return '';
     const d = new Date(iso);
@@ -69,24 +87,29 @@ export default function ListaAlumnos() {
     });
   };
 
-  // Toggle single expanded row
+  // Toggle single expanded row: esta funcion es para que solo un alumno
+  // pueda estar "expandido" pulsar nuevamente lo oculta
   const toggleRow = id => setExpandedRow(prev => (prev === id ? null : id));
 
-  // Filter
+  // Filter: Es el filtro para la busqueda de alumnos, recorre todos los 
+  // alumnos y regresa solo los que cumplen con la condicion
   const filtered = alumnos.filter(a =>
     a.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     a.curp.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination
+  // Pagination: total pages calcula cuantas paginas harian falta para poner los
+  // resultados y paged contiene unicamente los alumnos que mostrar en la 
+  // pagina acctiva
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paged = filtered.slice(page * pageSize, (page + 1) * pageSize);
 
-  // Render group label
+  // Render group label: pos este muestra el grupo al que pertenece sino muestra
+  // sin asignar
   const renderGroupLabel = a =>
     a.id_grupo ? `${a.grado_grupo} — ${a.grupo}` : 'Sin asignar';
 
-  // Export Excel
+  // Export Excel: lo hace excel xd
   const handleExportExcel = () => {
     const dataToExport = filtered.map(a => ({
       'Nombre completo': a.nombre_completo,
@@ -163,7 +186,7 @@ export default function ListaAlumnos() {
           padding: 8,
           margin: '12px 0',
           border: '1px solid #ccc',
-          borderRadius: 4
+          borderRadius: 20
         }}
       />
 
@@ -263,12 +286,12 @@ export default function ListaAlumnos() {
                 </tr>
                 {expandedRow === a.id_alumno && (
                   <tr>
-                    <td colSpan={5} style={{ background: '#f9f9f9', padding: 12 }}>
+                    <td colSpan={5} style={{ background: '#eae7e7ff', padding: 12 }}>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                         <div><strong>Institución:</strong> {a.institucion}</div>
-                        <div><strong>Profesor (Grupo):</strong> {a.profesor_grupo || '—'}</div>
+                        <div><strong>Profesor de Grupo:</strong> {a.profesor_grupo || '—'}</div>
                         <div><strong>Género:</strong> {a.genero}</div>
-                        <div><strong>Grupo:</strong> {renderGroupLabel(a)}</div>
+                        <div><strong>Grado y Grupo:</strong> {renderGroupLabel(a)}</div>
                         <div><strong>F. Nacimiento:</strong> {formatDate(a.fecha_nacimiento)}</div>
                         <div><strong>Edad:</strong> {a.edad_calculada}</div>
                         <div><strong>F. Inscripción:</strong> {formatDate(a.fecha_inscripcion)}</div>

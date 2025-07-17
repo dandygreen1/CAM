@@ -28,9 +28,15 @@ export default function App() {
       {loggedIn && <Navbar />}
 
       <Routes>
-        {/* Ruta pública */}
-        <Route path="/login" element={<Login />} />
-
+        {/* Ruta pública: si ya está logueado, redirige a /alumnos y reemplaza el historial */}
+<Route
+  path="/login"
+  element={
+    loggedIn
+      ? <Navigate to="/alumnos" replace />
+      : <Login />
+  }
+/>
         {/* Alumnos */}
         <Route
           path="/alumnos"

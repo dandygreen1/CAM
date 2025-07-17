@@ -8,9 +8,9 @@ import { asignarGrupoAlumno } from '../controllers/alumnosController.js';
 
 const router = Router();
 
-// públicas (no necesitan token para consultarlas)
-router.get('/',    getAllAlumnos);
-router.get('/:id', getAlumnoById);
+// (no necesitan token para consultarlas)
+router.get('/', authenticateToken, getAllAlumnos);
+router.get('/:id', authenticateToken, getAlumnoById);
 
 // protegidas (requieren token y rol admin)
 router.post('/',   authenticateToken, authorizeAdmin, createAlumno);

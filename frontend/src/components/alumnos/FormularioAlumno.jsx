@@ -74,9 +74,7 @@ export default function FormularioAlumno() {
           id_maestro:       data.id_maestro      ?? '',
           nombre_completo:  data.nombre_completo || '',
           curp:             data.curp            || '',
-          fecha_nacimiento: data.fecha_nacimiento
-                                ? data.fecha_nacimiento.split('T')[0]
-                                : '',
+          fecha_nacimiento: data.fecha_nacimiento ? data.fecha_nacimiento.split('T')[0] : '',
           padre_tutor:      data.padre_tutor     || '',
           contacto_emergencia: data.contacto_emergencia || '',
           domicilio:        data.domicilio       || '',
@@ -215,7 +213,7 @@ export default function FormularioAlumno() {
           </div>
         ))}
 
-        {/* Textareas */}
+        {/* Textareas pa texto mas largo*/}
         {[
           { label:'Diagnóstico Médico', name:'diagnostico_medico' },
           { label:'Medicamentos',       name:'medicamentos' },

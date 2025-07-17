@@ -15,7 +15,7 @@ export default function ListaInstituciones() {
   const isAdmin = user.tipo === 'admin';
 
   const [instituciones, setInstituciones] = useState([]);
-  const [searchTerm, setSearchTerm]       = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Guardar un único registro expandido
   const [expandedRow, setExpandedRow] = useState(() => {
@@ -57,10 +57,22 @@ export default function ListaInstituciones() {
   useEffect(() => {
     fetchInstituciones();
   }, []);
+
   const fetchInstituciones = async () => {
-    const { data } = await API.get('/instituciones');
-    setInstituciones(data);
+    try {
+      const { data } = await API.get('/instituciones');
+      setInstituciones(data);
+    } catch (err) {
+      if (err.response?.status === 403) {
+        alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+        // Si lo deseas, puedes redirigir al login:
+        // navigate('/login');
+      } else {
+        console.error(err);
+      }
+    }
   };
+
 
   // Eliminar
   const handleDelete = async id => {
@@ -98,9 +110,9 @@ export default function ListaInstituciones() {
 
   // Filtrar y paginar
   const filtered = instituciones.filter(i =>
-    (i.nombre      ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (i.cct         ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (i.director    ?? '').toLowerCase().includes(searchTerm.toLowerCase())
+    (i.nombre ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (i.cct ?? '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (i.director ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
   const paginated = filtered.slice(
     currentPage * pageSize,
@@ -140,12 +152,12 @@ export default function ListaInstituciones() {
     doc.text('Lista de Instituciones', 14, 12);
     autoTable(doc, {
       head: [[
-        'Nombre','Tipo','CCT','Zona','Sector',
-        'Director','Teléfono','Email','Fecha creación','Activo'
+        'Nombre', 'Tipo', 'CCT', 'Zona', 'Sector',
+        'Director', 'Teléfono', 'Email', 'Fecha creación', 'Activo'
       ]],
       body: filtered.map(i => [
         i.nombre,
-        i.tipo     ?? '',
+        i.tipo ?? '',
         i.cct,
         i.zona,
         i.sector,
@@ -193,7 +205,7 @@ export default function ListaInstituciones() {
           onChange={handleChangePageSize}
           style={{ padding: '4px 8px', borderRadius: 4, border: '1px solid #aaa' }}
         >
-          {[5,8,10,20,50,100].map(n => <option key={n} value={n}>{n}</option>)}
+          {[5, 8, 10, 20, 50, 100].map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </div>
 
